@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:freewheel_mart/screens/home_screen.dart';
+import 'package:freewheel_mart/screens/shoping.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -12,8 +14,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
   int _currentIndex = 0;
 
   List<Widget> screens = [
-    // const Home(),
-    // const Shopping(),
+    const Home(),
+    const Shopping(),
     // const Wallet(),
     // const Account(),
   ];
