@@ -111,19 +111,19 @@ class _MyShoppingState extends State<MyShopping> {
                 const SizedBox(height: 20),
                 // 2. Each cart item slides in from right with stagger
                 _buildCartItem(
-                  "assets/bicycle3.png",
+                  "assets/images/bicycle3.png",
                   "GT Bike",
                   2599.99,
                   delay: 100.ms,
                 ),
                 _buildCartItem(
-                  "assets/helmet.png",
+                  "assets/images/helmet.png",
                   "Helmet",
                   125.99,
                   delay: 200.ms,
                 ),
                 _buildCartItem(
-                  "assets/bottle.png",
+                  "assets/images/bottle.png",
                   "Bottle",
                   115.99,
                   delay: 300.ms,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:freewheel_mart/screens/account.dart';
 import 'package:freewheel_mart/screens/home_screen.dart';
 import 'package:freewheel_mart/screens/shoping.dart';
+import 'package:freewheel_mart/screens/wallet.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
@@ -16,8 +18,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
   List<Widget> screens = [
     const Home(),
     const Shopping(),
-    // const Wallet(),
-    // const Account(),
+    const Wallet(),
+    const Account(),
   ];
 
   @override
@@ -44,19 +46,19 @@ class _BottomNavigationState extends State<BottomNavigation> {
                         children: [
                           _buildBottomAppBarItem(
                             index: 0,
-                            iconPath: "assets/navigation/house.png",
+                            iconPath: "assets/images/house.png",
                           ),
                           _buildBottomAppBarItem(
                             index: 1,
-                            iconPath: "assets/navigation/shopping-bag.png",
+                            iconPath: "assets/images/shopping-bag.png",
                           ),
                           _buildBottomAppBarItem(
                             index: 2,
-                            iconPath: "assets/navigation/wallet.png",
+                            iconPath: "assets/images/wallet.png",
                           ),
                           _buildBottomAppBarItem(
                             index: 3,
-                            iconPath: "assets/navigation/user.png",
+                            iconPath: "assets/images/user.png",
                           ),
                         ],
                       ),

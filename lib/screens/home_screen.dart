@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freewheel_mart/screens/detail_screen.dart';
+import 'package:freewheel_mart/utils/transition.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -79,7 +81,7 @@ class _HomeState extends State<Home> {
             child: RotatedBox(
               quarterTurns: 1,
               child: Text(
-                "EXTREME",
+                "FREEWHEEL",
                 style: GoogleFonts.allertaStencil(
                   fontSize: 125,
                   fontWeight: FontWeight.w400,
@@ -266,12 +268,12 @@ class _HomeState extends State<Home> {
                     children: List.generate(bicycle.length, (index) {
                       return GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   DiagonalWipePageRoute(
-                              //     page: DetailScreen(data: bicycle[index]),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                DiagonalWipePageRoute(
+                                  page: DetailScreen(data: bicycle[index]),
+                                ),
+                              );
                             },
                             child: Container(
                               height: 255,
