@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1051609421686",
+    "project_id": "free-wheel-bc98d",
+    "storage_bucket": "free-wheel-bc98d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1051609421686:android:43086da75b4a2adb5c8c57",
+        "android_client_info": {
+          "package_name": "com.example.freewheel_mart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIj3elocPIXAri0ThrrqY5c39a18sx3vU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

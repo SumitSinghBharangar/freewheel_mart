@@ -50,7 +50,7 @@ class _WalletState extends State<Wallet> {
             child: RotatedBox(
               quarterTurns: 1,
               child: Text(
-                "EXTREME",
+                "FREEWHEEL",
                 style: GoogleFonts.allertaStencil(
                   fontSize: 125,
                   fontWeight: FontWeight.w400,

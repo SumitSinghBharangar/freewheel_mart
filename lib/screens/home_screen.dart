@@ -263,8 +263,8 @@ class _HomeState extends State<Home> {
                   const SizedBox(height: 20),
                   // 4. Product cards slide up staggered
                   Wrap(
-                    spacing: 15,
-                    runSpacing: 15,
+                    spacing: 10,
+                    runSpacing: 10,
                     children: List.generate(bicycle.length, (index) {
                       return GestureDetector(
                             onTap: () {
@@ -277,7 +277,7 @@ class _HomeState extends State<Home> {
                             },
                             child: Container(
                               height: 255,
-                              width: 187,
+                              width: 180,
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 borderRadius: const BorderRadius.all(
