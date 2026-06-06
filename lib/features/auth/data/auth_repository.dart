@@ -1,34 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'user_model.dart';
+import 'package:freewheel_mart/features/auth/data/user_model.dart';
 
 class AuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// Stream to listen to real-time authentication state changes.
-  /// Emits a Firebase [User] object when login status updates.
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  /// Retrieve the currently authenticated Firebase user instance.
   User? get currentUser => _auth.currentUser;
 
-  /// Creates a user account in Firebase Auth and builds an explicit matching
-  /// database profile inside the Cloud Firestore 'users' collection.
   Future<UserCredential> signUpWithEmailAndPassword({
     required String email,
     required String password,
     required String fullName,
   }) async {
     try {
-      // 1. Create native auth record
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
 
       final User? user = userCredential.user;
 
       if (user != null) {
-        // 2. Initialize the structured UserModel payload with defaults
         UserModel newUser = UserModel(
           uid: user.uid,
           name: fullName,
@@ -39,7 +32,6 @@ class AuthRepository {
           updatedAt: DateTime.now(),
         );
 
-        // 3. Commit map payload serialization straight into Firestore
         await _firestore.collection('users').doc(user.uid).set(newUser.toMap());
       }
 
@@ -51,7 +43,6 @@ class AuthRepository {
     }
   }
 
-  /// Authenticates an existing user record via Email and Password.
   Future<UserCredential> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -68,8 +59,6 @@ class AuthRepository {
     }
   }
 
-  /// Fetches a user's database record completely compiled into a UserModel instance.
-  /// Returns null if the underlying Firestore document does not exist.
   Future<UserModel?> getUserDetails(String uid) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot = await _firestore
@@ -86,8 +75,6 @@ class AuthRepository {
     }
   }
 
-  /// Updates profile metadata fields (like physical addresses or phone numbers)
-  /// within a specific user document using your model's schema.
   Future<void> updateUserDetails(UserModel updatedUser) async {
     try {
       await _firestore
@@ -99,12 +86,10 @@ class AuthRepository {
     }
   }
 
-  /// Terminates the current device session.
   Future<void> signOut() async {
     await _auth.signOut();
   }
 
-  /// Explicit translation handler for Firebase native exceptions into clean user warnings.
   String _handleAuthException(FirebaseAuthException e) {
     switch (e.code) {
       case 'weak-password':
