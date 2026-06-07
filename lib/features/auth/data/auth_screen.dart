@@ -1,13 +1,16 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:freewheel_mart/common/buttons/dynamic_button.dart';
 import 'package:freewheel_mart/common/enum.dart';
+import 'package:freewheel_mart/features/auth/provider/auth_provider.dart';
 import 'package:freewheel_mart/screens/bottom_navigation.dart';
 import 'package:freewheel_mart/splash_screen.dart';
 import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -18,6 +21,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   AuthMode _currentMode = AuthMode.login;
+  final _formKey = GlobalKey<FormState>();
 
   // Controllers for text inputs
   final TextEditingController _nameController = TextEditingController();
@@ -26,6 +30,7 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _phoneController = TextEditingController();
 
   void _switchMode(AuthMode mode) {
+    if (context.read<AuthProvider>().isLoading) return;
     setState(() {
       _currentMode = mode;
     });
@@ -40,10 +45,58 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
+  void _showSnackBar(String message, bool isError) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? const Color(0xffE53935) : Colors.green,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _handleSubmit(AuthProvider authProvider) async {
+    // Basic structural validation checks
+    if (_emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
+      _showSnackBar("Please fill out required credentials.", true);
+      return;
+    }
+
+    if (_currentMode == AuthMode.signup &&
+        _nameController.text.trim().isEmpty) {
+      _showSnackBar("Please specify your full name.", true);
+      return;
+    }
+
+    bool success = false;
+
+    if (_currentMode == AuthMode.login) {
+      success = await authProvider.signInWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      if (success) _showSnackBar("Welcome back to VeloHub!", false);
+    } else if (_currentMode == AuthMode.signup) {
+      success = await authProvider.registerWithEmail(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        fullName: _nameController.text.trim(),
+      );
+      if (success) {
+        _showSnackBar("Registration complete! Account created.", false);
+        _switchMode(AuthMode.login);
+      }
+    }
+
+    if (!success && mounted && authProvider.errorMessage != null) {
+      _showSnackBar(authProvider.errorMessage!, true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Determine target rotation angles based on state
-    // Login = 0 degrees, Signup = 180 degrees (Flipped horizontally)
+    final authProvider = Provider.of<AuthProvider>(context);
     double yRotation = _currentMode == AuthMode.signup ? pi : 0.0;
     // Forgot Password = 180 degrees (Flipped vertically)
     double xRotation = _currentMode == AuthMode.forgotPassword ? pi : 0.0;
@@ -166,7 +219,6 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 3D Animated Card Container
                   TweenAnimationBuilder(
                     tween: Tween<Offset>(
                       begin: Offset.zero,
@@ -234,9 +286,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                             ..rotateY(
                                               pi,
                                             ), // Correct mirror text orientation
-                                          child: _buildSignupView(),
+                                          child: _buildSignupView(authProvider),
                                         )
-                                      : _buildLoginView(),
+                                      : _buildLoginView(authProvider),
                                 )
                                 .animate()
                                 .scale(
@@ -260,7 +312,7 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget _buildLoginView() {
+  Widget _buildLoginView(AuthProvider authProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -302,13 +354,9 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         const SizedBox(height: 8),
         DynamicButton(
+          isLoading: authProvider.isLoading,
+          onPressed: () => _handleSubmit(authProvider),
           child: Text("SIGN IN"),
-          onPressed: () {
-            Navigator.push(
-              context,
-              DiagonalWipePageRoute(page: const BottomNavigation()),
-            );
-          },
         ),
 
         const SizedBox(height: 16),
@@ -336,7 +384,7 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget _buildSignupView() {
+  Widget _buildSignupView(AuthProvider authprovider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -379,7 +427,11 @@ class _AuthScreenState extends State<AuthScreen> {
           isPassword: true,
         ),
         const SizedBox(height: 24),
-        DynamicButton(child: Text("REGISTER"), onPressed: () {}),
+        DynamicButton(
+          isLoading: authprovider.isLoading,
+          onPressed: () => _handleSubmit(authprovider),
+          child: Text("REGISTER"),
+        ),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -458,10 +510,14 @@ class _AuthScreenState extends State<AuthScreen> {
     required String label,
     required IconData icon,
     bool isPassword = false,
+
+    bool isphone = false,
   }) {
     return TextField(
       controller: controller,
       obscureText: isPassword,
+      keyboardType: isphone ? TextInputType.phone : TextInputType.name,
+
       style: const TextStyle(color: Colors.white, fontSize: 14),
       onTapOutside: (event) {
         FocusScope.of(context).unfocus();

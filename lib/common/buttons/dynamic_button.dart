@@ -98,12 +98,12 @@ class _DynamicButtonState extends State<DynamicButton> {
                             (widget.isLoading ?? false)) ||
                         _isLoading)
                     ? [
-                        Color.fromRGBO(55, 182, 233, 1),
-                        Color.fromRGBO(72, 92, 236, 1),
-                      ]
-                    : [
                         const Color.fromARGB(255, 184, 183, 183),
                         Color.fromARGB(255, 136, 136, 136),
+                      ]
+                    : [
+                        Color.fromRGBO(55, 182, 233, 1),
+                        Color.fromRGBO(72, 92, 236, 1),
                       ],
               ),
 
