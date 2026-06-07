@@ -22,7 +22,6 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   AuthMode _currentMode = AuthMode.login;
-  final _formKey = GlobalKey<FormState>();
 
   // Controllers for text inputs
   final TextEditingController _nameController = TextEditingController();
@@ -566,37 +565,6 @@ class _AuthScreenState extends State<AuthScreen> {
         contentPadding: const EdgeInsets.symmetric(
           vertical: 16,
           horizontal: 16,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButton({
-    required String text,
-    required VoidCallback onPressed,
-  }) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(
-            0xff1A1A1A,
-          ), // Dark contrast action button
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 0,
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1,
-          ),
         ),
       ),
     );
