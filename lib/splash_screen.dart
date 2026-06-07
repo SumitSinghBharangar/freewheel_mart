@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:freewheel_mart/features/auth/data/auth_screen.dart';
 import 'package:freewheel_mart/screens/bottom_navigation.dart';
 import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: const Color.fromRGBO(36, 44, 59, 1),
       body: Stack(
         children: [
-          // 1. Background Fade In
+          
           Container(
             color: const Color.fromRGBO(36, 44, 59, 1),
           ).animate().fadeIn(duration: 300.ms),
@@ -49,7 +50,6 @@ class _SplashScreenState extends State<SplashScreen> {
             curve: Curves.easeInOut,
           ),
 
-          // 2. "EXTREME" vertical text slides in from the right with a blur-to-sharp effect
           Align(
             alignment: Alignment.centerRight,
             child: RotatedBox(
@@ -151,7 +151,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       onSubmit: () {
                         Navigator.push(
                           context,
-                          DiagonalWipePageRoute(page: const BottomNavigation()),
+                          DiagonalWipePageRoute(page: const AuthScreen()),
                         );
                         return null;
                       },
