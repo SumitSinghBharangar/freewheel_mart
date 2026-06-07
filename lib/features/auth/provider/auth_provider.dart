@@ -29,6 +29,7 @@ class AuthProvider extends ChangeNotifier {
     required String email,
     required String password,
     required String fullName,
+    required String phone,
   }) async {
     _setLoading(true);
     _clearError();
@@ -37,6 +38,7 @@ class AuthProvider extends ChangeNotifier {
         email: email,
         password: password,
         fullName: fullName,
+        phone: phone
       );
       _setLoading(false);
       return true;
@@ -71,6 +73,20 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendPasswordReset({required String email}) async {
+    _setLoading(true);
+    _clearError();
+    try {
+      await _authRepository.sendPasswordResetEmail(email: email);
+      _setLoading(false);
+      return true;
+    } catch (e) {
+      _errorMessage = e.toString();
+      _setLoading(false);
+      return false;
+    }
+  }
+
   Future<void> fetchAndSyncUserDetails(String uid) async {
     try {
       _currentUserModel = await _authRepository.getUserDetails(uid);
@@ -78,6 +94,7 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       _errorMessage = e.toString();
       notifyListeners();
+      rethrow;
     }
   }
 

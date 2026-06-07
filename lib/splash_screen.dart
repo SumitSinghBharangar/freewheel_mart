@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:freewheel_mart/features/auth/data/auth_screen.dart';
 import 'package:freewheel_mart/screens/bottom_navigation.dart';
+import 'package:freewheel_mart/screens/home_screen.dart';
 import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slide_to_act/slide_to_act.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,13 +17,28 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  void _handleSplashGateTrigger() {
+    User? user = FirebaseAuth.instance.currentUser;
+  
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        DiagonalWipePageRoute(page: BottomNavigation()),
+      );
+    }
+
+    Navigator.pushReplacement(
+      context,
+      DiagonalWipePageRoute(page: AuthScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(36, 44, 59, 1),
       body: Stack(
         children: [
-          
           Container(
             color: const Color.fromRGBO(36, 44, 59, 1),
           ).animate().fadeIn(duration: 300.ms),
@@ -148,11 +166,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     height: 70,
                     width: 300,
                     child: SlideAction(
+                      // LINKED TO THE GATEKEEPER ROUTINE HERE
                       onSubmit: () {
-                        Navigator.push(
-                          context,
-                          DiagonalWipePageRoute(page: const AuthScreen()),
-                        );
+                        _handleSplashGateTrigger();
                         return null;
                       },
                       alignment: Alignment.centerRight,

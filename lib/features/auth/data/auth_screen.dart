@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:freewheel_mart/common/buttons/dynamic_button.dart';
 import 'package:freewheel_mart/common/enum.dart';
+
 import 'package:freewheel_mart/features/auth/provider/auth_provider.dart';
 import 'package:freewheel_mart/screens/bottom_navigation.dart';
 import 'package:freewheel_mart/splash_screen.dart';
@@ -76,12 +77,19 @@ class _AuthScreenState extends State<AuthScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      if (success) _showSnackBar("Welcome back to VeloHub!", false);
+      if (success) {
+        _showSnackBar("Welcome back to Free-Wheel", false);
+        Navigator.pushReplacement(
+          context,
+          DiagonalWipePageRoute(page: BottomNavigation()),
+        );
+      }
     } else if (_currentMode == AuthMode.signup) {
       success = await authProvider.registerWithEmail(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         fullName: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
       );
       if (success) {
         _showSnackBar("Registration complete! Account created.", false);
@@ -277,7 +285,9 @@ class _AuthScreenState extends State<AuthScreen> {
                                             ..rotateX(
                                               pi,
                                             ), // Correct mirror text orientation
-                                          child: _buildForgotPasswordView(),
+                                          child: _buildForgotPasswordView(
+                                            authProvider,
+                                          ),
                                         )
                                       : isSignUpFront
                                       ? Transform(
@@ -457,7 +467,7 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget _buildForgotPasswordView() {
+  Widget _buildForgotPasswordView(AuthProvider authProvider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -466,13 +476,13 @@ class _AuthScreenState extends State<AuthScreen> {
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Colors.white,
           ),
         ),
         const SizedBox(height: 4),
         const Text(
           'Enter your registered email to receive a recovery link',
-          style: TextStyle(color: Colors.grey, fontSize: 13),
+          style: TextStyle(color: Colors.white70, fontSize: 13),
         ),
         const SizedBox(height: 24),
         _buildTextField(
@@ -481,7 +491,34 @@ class _AuthScreenState extends State<AuthScreen> {
           icon: Icons.mail_outline,
         ),
         const SizedBox(height: 24),
-        _buildActionButton(text: 'SEND RESET LINK', onPressed: () {}),
+        DynamicButton(
+          onPressed: () async {
+            final email = _emailController.text.trim();
+
+            if (email.isEmpty) {
+              _showSnackBar("Please enter your email address.", true);
+              return;
+            }
+
+            // Run the recovery network call
+            bool linkSent = await authProvider.sendPasswordReset(email: email);
+
+            if (linkSent && mounted) {
+              _showSnackBar(
+                "Reset link sent! Please check your email inbox.",
+                false,
+              );
+              // Smoothly flip the box back to the regular sign-in mode
+              _switchMode(AuthMode.login);
+            } else if (!linkSent &&
+                mounted &&
+                authProvider.errorMessage != null) {
+              _showSnackBar(authProvider.errorMessage!, true);
+            }
+          },
+          isLoading: authProvider.isLoading,
+          child: Text("SEND RESET LINK"),
+        ),
         const SizedBox(height: 16),
         Center(
           child: TextButton.icon(

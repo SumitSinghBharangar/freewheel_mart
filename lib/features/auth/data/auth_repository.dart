@@ -14,6 +14,7 @@ class AuthRepository {
     required String email,
     required String password,
     required String fullName,
+    required String phone,
   }) async {
     try {
       UserCredential userCredential = await _auth
@@ -27,6 +28,7 @@ class AuthRepository {
           name: fullName,
           mail: email,
           role: 'user',
+          phone: phone,
           balance: '0.0',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
@@ -88,6 +90,16 @@ class AuthRepository {
 
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw _handleAuthException(e);
+    } catch (e) {
+      throw 'An unexpected error occurred while requesting your link.';
+    }
   }
 
   String _handleAuthException(FirebaseAuthException e) {
