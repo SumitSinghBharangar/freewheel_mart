@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:freewheel_mart/features/auth/data/auth_screen.dart';
 import 'package:freewheel_mart/features/home/views/main_navigation_shell.dart';
-import 'package:freewheel_mart/screens/bottom_navigation.dart';
+
 
 import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';

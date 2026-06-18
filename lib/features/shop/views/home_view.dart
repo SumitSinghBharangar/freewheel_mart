@@ -5,8 +5,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:freewheel_mart/features/auth/provider/auth_provider.dart';
 import 'package:freewheel_mart/features/shop/data/product_model.dart';
 import 'package:freewheel_mart/features/shop/provider/product_provider.dart';
+import 'package:freewheel_mart/features/shop/views/product_detail_screen.dart';
 import 'package:freewheel_mart/features/shop/views/widgets/categories_chips.dart';
+import 'package:freewheel_mart/features/shop/views/widgets/product_card.dart';
+import 'package:freewheel_mart/screens/detail_screen.dart';
 import 'package:freewheel_mart/screens/home_screen.dart';
+import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -268,54 +272,23 @@ class HomeView extends StatelessWidget {
                             crossAxisCount: 2,
                             mainAxisSpacing: 16,
                             crossAxisSpacing: 16,
-                            childAspectRatio:
-                                0.75, // Perfect ratio sizing framework
+                            childAspectRatio: 0.75,
                           ),
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        final item = products[index];
-                        // Temporary structural cell wrapper before card file implementation
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xff242C3B),
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.03),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Icon(
-                                    Icons.image_outlined,
-                                    color: Colors.white24,
-                                    size: 36,
-                                  ),
-                                ),
+                        final ProductModel item = products[index];
+
+                        return ProductCard(
+                          product: item,
+                          onTap: () {
+                            // Smoothly navigate to your custom styled detail screen with the active item data
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ProductDetailScreen(product: item),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                item.name ?? "Unnamed Bike",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                "\$${item.price?.toStringAsFixed(2) ?? '0.00'}",
-                                style: const TextStyle(
-                                  color: Color(0xff4B4CED),
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ],
-                          ),
+                            );
+                          },
                         );
                       }, childCount: products.length),
                     ),
