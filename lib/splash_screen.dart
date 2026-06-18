@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:freewheel_mart/features/auth/data/auth_screen.dart';
+import 'package:freewheel_mart/features/home/views/main_navigation_shell.dart';
 import 'package:freewheel_mart/screens/bottom_navigation.dart';
-import 'package:freewheel_mart/screens/home_screen.dart';
+
 import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,18 +19,21 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   void _handleSplashGateTrigger() {
     User? user = FirebaseAuth.instance.currentUser;
-  
+
+    
+
     if (user != null) {
       Navigator.pushReplacement(
         context,
-        DiagonalWipePageRoute(page: BottomNavigation()),
+        // DiagonalWipePageRoute(page: BottomNavigation()),
+        DiagonalWipePageRoute(page: MainNavigationShell()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        DiagonalWipePageRoute(page: AuthScreen()),
       );
     }
-
-    Navigator.pushReplacement(
-      context,
-      DiagonalWipePageRoute(page: AuthScreen()),
-    );
   }
 
   @override
