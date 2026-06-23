@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:freewheel_mart/features/shop/views/home_view.dart';
+import 'package:freewheel_mart/features/wallet/view/wallet_view.dart';
 
 class MainNavigationShell extends StatefulWidget {
   const MainNavigationShell({super.key});
@@ -19,7 +20,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
       'Shop Catalog & Filters',
       Colors.blueGrey.shade900,
     ),
-    _buildScrollablePlaceholder('Digital Wallet Screen', Colors.teal.shade900),
+    WalletView(),
     _buildScrollablePlaceholder(
       'User Profile & Controls',
       Colors.deepPurple.shade900,
