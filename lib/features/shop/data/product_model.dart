@@ -53,6 +53,24 @@ class ProductModel {
     };
   }
 
+  ProductModel copyWith({
+    String? id,
+    String? name,
+    String? description,
+    double? price,
+    List<String>? images,
+    Map<String, String>? specifications,
+  }) {
+    return ProductModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      images: images ?? this.images,
+      specifications: specifications ?? this.specifications,
+    );
+  }
+
   // Factory Constructor to securely parse incoming Firestore document data
   factory ProductModel.fromMap(Map<String, dynamic> map, String documentId) {
     return ProductModel(

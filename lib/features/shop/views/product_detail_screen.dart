@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:freewheel_mart/features/cart/provider/cart_provider.dart';
 import 'package:freewheel_mart/features/shop/data/product_model.dart'; // Safe typed structure path
 import 'package:freewheel_mart/screens/shoping_page.dart';
 import 'package:freewheel_mart/utils/transition.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   final ProductModel product; // Replaced Map<String, dynamic> with ProductModel
@@ -73,7 +75,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             child: RotatedBox(
               quarterTurns: 1,
               child: Text(
-                "EXTREME",
+                "FREEWHEEL",
                 style: GoogleFonts.allertaStencil(
                   fontSize: 125,
                   fontWeight: FontWeight.w400,
@@ -148,7 +150,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 Column(
                   children: [
                     const SizedBox(height: 20),
-                    // 1. Bicycle image slides in from right with rotation (Now reading Cloudinary array)
+
                     SizedBox(
                       height: 360,
                       width: double.infinity,
@@ -383,7 +385,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         child: Row(
           children: [
             const SizedBox(width: 5),
-            // 6. Price counts up
+
             TweenAnimationBuilder<double>(
               tween: Tween<double>(begin: 0, end: product.price ?? 0.0),
               duration: 600.ms,
@@ -399,12 +401,23 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               },
             ),
             const Spacer(),
-            // 7. "Buy Now" button slides up + glow pulse
+
             GestureDetector(
                   onTap: () {
-                    Navigator.push(
+                    Provider.of<CartProvider>(
                       context,
-                      DiagonalWipePageRoute(page: const MyShopping()),
+                      listen: false,
+                    ).addToCart(widget.product);
+
+                    // 2. Alert the user context cleanly with a SnackBar notice
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "${widget.product.name} successfully added to cart!",
+                        ),
+                        duration: const Duration(seconds: 2),
+                        backgroundColor: const Color(0xff4B4CED),
+                      ),
                     );
                   },
                   child: Container(
@@ -433,7 +446,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     child: Center(
                       child: Text(
-                        "Buy Now",
+                        "Cart",
                         style: GoogleFonts.poppins(
                           fontSize: 22,
                           fontWeight: FontWeight.w500,

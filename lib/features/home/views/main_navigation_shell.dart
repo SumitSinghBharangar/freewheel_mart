@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:freewheel_mart/features/cart/view/cart_view.dart';
 import 'package:freewheel_mart/features/shop/views/home_view.dart';
 import 'package:freewheel_mart/features/wallet/view/wallet_view.dart';
 
@@ -16,10 +17,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   // Temporary content feeds to verify scrolling visibility behind the bar
   final List<Widget> _views = [
     HomeView(),
-    _buildScrollablePlaceholder(
-      'Shop Catalog & Filters',
-      Colors.blueGrey.shade900,
-    ),
+    CartView(),
     WalletView(),
     _buildScrollablePlaceholder(
       'User Profile & Controls',
