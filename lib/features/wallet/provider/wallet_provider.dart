@@ -15,7 +15,9 @@ class WalletProvider extends ChangeNotifier {
     required double amount,
   }) async {
     final UserModel? user = authProvider.currentUserModel;
-    if (user == null || amount <= 0) return false;
+
+    // Safety check: Block processing if user is not logged in or uid is empty
+    if (user == null || user.uid.isEmpty || amount <= 0) return false;
 
     _isProcessing = true;
     notifyListeners();
@@ -23,31 +25,33 @@ class WalletProvider extends ChangeNotifier {
     try {
       final double currentBalance = double.tryParse(user.balance) ?? 0.0;
       final double newBalance = currentBalance + amount;
+      final String formattedBalance = newBalance.toStringAsFixed(2);
 
-      // 1. Update total inside Firestore user document snapshot
+      // 1. Update total directly inside the main user document snapshot reference
       await _firestore.collection('users').doc(user.uid).update({
-        'balance': newBalance.toStringAsFixed(2),
+        'balance': formattedBalance,
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      // 2. Log an entry inside the transaction nested collection tracking store
-      final transactionRef = _firestore
-          .collection('users')
-          .doc(user.uid)
-          .collection('transactions')
-          .doc();
-
-      final logEntry = TransactionModel(
-        id: transactionRef.id,
-        amount: amount,
-        type: TransactionType.deposit,
-        description: "Funds added via digital wallet profile Top-Up",
-        timestamp: DateTime.now(),
+      // 2. Log an entry inside the flat ROOT 'transactions' collection instead of nested path
+      final CollectionReference transactionsRoot = _firestore.collection(
+        'transactions',
       );
+      final String customTxId = transactionsRoot.doc().id;
 
-      await transactionRef.set(logEntry.toMap());
+      final logEntry = {
+        'id': customTxId,
+        'userId': user.uid, // Explicit link query key back to user
+        'amount': amount,
+        'type': TransactionType.deposit.name,
+        'description': "Funds added via digital wallet profile Top-Up",
+        'timestamp':
+            FieldValue.serverTimestamp(), // Firestore server-side time anchor
+      };
 
-      // 3. Refresh user data state profiles
+      await transactionsRoot.doc(customTxId).set(logEntry);
+
+      // 3. Force-sync local data state properties instantly
       await authProvider.fetchAndSyncUserDetails(user.uid);
 
       _isProcessing = false;
@@ -60,18 +64,41 @@ class WalletProvider extends ChangeNotifier {
     }
   }
 
-  /// Real-time listener stream for user financial history logs
+  /// Real-time stream for user financial history logs from root collection
   Stream<List<TransactionModel>> streamTransactions(String uid) {
+    // FIX: Fail-safe check. If the incoming string path is empty, return an empty stream list instantly
+    if (uid.isEmpty) {
+      return Stream.value([]);
+    }
+
     return _firestore
-        .collection('users')
-        .doc(uid)
         .collection('transactions')
+        .where(
+          'userId',
+          isEqualTo: uid,
+        ) // Filter root records targeting this user specifically
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map(
-          (snap) => snap.docs
-              .map((doc) => TransactionModel.fromMap(doc.data(), doc.id))
-              .toList(),
+          (snap) => snap.docs.map((doc) {
+            final data = doc.data();
+
+            // Handle conversion if timestamp arrives from Firestore as placeholder server token
+            DateTime parseTime = DateTime.now();
+            if (data['timestamp'] != null && data['timestamp'] is Timestamp) {
+              parseTime = (data['timestamp'] as Timestamp).toDate();
+            }
+
+            return TransactionModel(
+              id: doc.id,
+              amount: (data['amount'] as num? ?? 0.0).toDouble(),
+              type: TransactionType.values.byName(
+                data['type'] as String? ?? 'deposit',
+              ),
+              description: data['description'] as String? ?? '',
+              timestamp: parseTime,
+            );
+          }).toList(),
         );
   }
 }
