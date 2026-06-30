@@ -77,8 +77,19 @@ class ProfileView extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 10),
+                SizedBox(height: 40),
 
-                // --- 1. USER IDENTITY CARD SECTION ---
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "My Profile",
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 26,
+                    ),
+                  ),
+                ),
                 Center(
                   child: Column(
                     children: [
