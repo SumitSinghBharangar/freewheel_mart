@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:freewheel_mart/features/auth/provider/auth_provider.dart';
+import 'package:freewheel_mart/features/cart/provider/cart_provider.dart';
 import 'package:freewheel_mart/features/shop/provider/product_provider.dart';
 import 'package:freewheel_mart/features/wallet/provider/wallet_provider.dart';
 import 'package:freewheel_mart/firebase_options.dart';
@@ -16,6 +17,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => WalletProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
 
       child: const MyApp(),

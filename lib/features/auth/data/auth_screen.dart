@@ -7,6 +7,7 @@ import 'package:freewheel_mart/common/buttons/dynamic_button.dart';
 import 'package:freewheel_mart/common/enum.dart';
 
 import 'package:freewheel_mart/features/auth/provider/auth_provider.dart';
+import 'package:freewheel_mart/features/home/views/main_navigation_shell.dart';
 import 'package:freewheel_mart/screens/bottom_navigation.dart';
 import 'package:freewheel_mart/splash_screen.dart';
 import 'package:freewheel_mart/utils/transition.dart';
@@ -80,7 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
         _showSnackBar("Welcome back to Free-Wheel", false);
         Navigator.pushReplacement(
           context,
-          DiagonalWipePageRoute(page: BottomNavigation()),
+          DiagonalWipePageRoute(page: MainNavigationShell()),
         );
       }
     } else if (_currentMode == AuthMode.signup) {

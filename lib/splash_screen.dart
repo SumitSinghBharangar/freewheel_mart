@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (user != null) {
       Navigator.pushReplacement(
         context,
-        // DiagonalWipePageRoute(page: BottomNavigation()),
+        
         DiagonalWipePageRoute(page: MainNavigationShell()),
       );
     } else {

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:freewheel_mart/features/cart/view/cart_view.dart';
+import 'package:freewheel_mart/features/profile/views/profile_view.dart';
 import 'package:freewheel_mart/features/shop/views/home_view.dart';
 import 'package:freewheel_mart/features/wallet/view/wallet_view.dart';
 
@@ -19,10 +20,8 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     HomeView(),
     CartView(),
     WalletView(),
-    _buildScrollablePlaceholder(
-      'User Profile & Controls',
-      Colors.deepPurple.shade900,
-    ),
+
+    ProfileView(),
   ];
 
   @override
